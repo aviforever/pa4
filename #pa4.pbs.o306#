@@ -1,0 +1,2 @@
+1;2crm -f *.o ImageCleaner
+g++ -fopenmp -o ImageCleaner main.cc JPEGWriter.cc CpuReference.cc ImageCleaner.cc -ljpeg

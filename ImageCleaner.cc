@@ -6,6 +6,7 @@
 #include <string.h>
 
 #define PI	3.14159265
+unsigned int chunks = 0;
 
 void cpu_fftx(float *real_image, float *imag_image, int size_x, int size_y)
 {
@@ -26,9 +27,9 @@ void cpu_fftx(float *real_image, float *imag_image, int size_x, int size_y)
 	imagInBuffer[i] = imag_image[x*size_x + i];
       }
 
-    //#pragma omp parallel shared(realInBuffer, imagInBuffer)
+  #pragma omp parallel shared(realInBuffer, imagInBuffer)
   {
-    //  #pragma omp for
+#pragma omp for schedule(dynamic, chunks)
     for(unsigned int y = 0; y < size_y; y++)
     {
       float realOut = 0;
@@ -93,8 +94,6 @@ void cpu_ifftx(float *real_image, float *imag_image, int size_x, int size_y)
   //  float *fft_real = new float[size_y];
   //  float *fft_imag = new float[size_y];
   //#pragma omp parallel 
-  {
-    //#pragma omp for
   for(unsigned int x = 0; x < size_x; x++)
   {
     for (unsigned int i = 0; i < size_y; i++)
@@ -102,7 +101,9 @@ void cpu_ifftx(float *real_image, float *imag_image, int size_x, int size_y)
 	realInBuffer[i] = real_image[x*size_x + i];
 	imagInBuffer[i] = imag_image[x*size_x + i];
       }
-
+  #pragma omp parallel shared(realInBuffer, imagInBuffer)
+  {
+    #pragma omp for schedule(dynamic, chunks)
     for(unsigned int y = 0; y < size_y; y++)
     {
       float realOut = 0;
@@ -142,6 +143,7 @@ void cpu_ifftx(float *real_image, float *imag_image, int size_x, int size_y)
       imag_image[x*size_x + y] = imagOut;
 
     }
+  }
     /*
     // Write the buffer back to were the original values were
     for(unsigned int y = 0; y < size_y; y++)
@@ -150,7 +152,6 @@ void cpu_ifftx(float *real_image, float *imag_image, int size_x, int size_y)
       imag_image[x*size_x + y] = imagOutBuffer[y];
     }
     */
-  }
   }
   // Reclaim some memory
   delete [] realInBuffer;
@@ -176,7 +177,6 @@ void cpu_ffty(float *real_image, float *imag_image, int size_x, int size_y)
   // memcpy(imagInBuffer, imag_image , size_x*size_y);
 
   //#pragma omp parallel 
-  {
     //#pragma omp for
   for(unsigned int y = 0; y < size_y; y++)
   {
@@ -185,6 +185,9 @@ void cpu_ffty(float *real_image, float *imag_image, int size_x, int size_y)
 	realInBuffer[i] = real_image[i*size_x + y];
 	imagInBuffer[i] = imag_image[i*size_x + y];
       }
+  #pragma omp parallel shared(realInBuffer, imagInBuffer)
+  {
+    #pragma omp for schedule(dynamic, chunks)
     for(unsigned int x = 0; x < size_x; x++)
     {
       float realOut = 0;
@@ -215,6 +218,7 @@ void cpu_ffty(float *real_image, float *imag_image, int size_x, int size_y)
       real_image[x*size_x + y] = realOut;
       imag_image[x*size_x + y] = imagOut;
     }
+  }
     /*
     // Write the buffer back to were the original values were
     for(unsigned int x = 0; x < size_x; x++)
@@ -223,7 +227,6 @@ void cpu_ffty(float *real_image, float *imag_image, int size_x, int size_y)
       imag_image[x*size_x + y] = imagOutBuffer[x];
       }
     */
-  }
   }
   // Reclaim some memory
   delete [] realInBuffer;
@@ -247,9 +250,7 @@ void cpu_iffty(float *real_image, float *imag_image, int size_x, int size_y)
 
   //  float *fft_real = new float[size_x];
   //  float *fft_imag = new float[size_x];
-  //#pragma omp parallel 
-  {
-    //#pragma omp for
+
   for(unsigned int y = 0; y < size_y; y++)
   {
     for (unsigned int i = 0; i < size_x; i++)
@@ -257,6 +258,9 @@ void cpu_iffty(float *real_image, float *imag_image, int size_x, int size_y)
 	realInBuffer[i] = real_image[i*size_x + y];
 	imagInBuffer[i] = imag_image[i*size_x + y];
       }
+  #pragma omp parallel shared(realInBuffer, imagInBuffer)
+  {
+    #pragma omp for schedule(dynamic, chunks)
     for(unsigned int x = 0; x < size_x; x++)
     {
       float realOut = 0;
@@ -297,6 +301,7 @@ void cpu_iffty(float *real_image, float *imag_image, int size_x, int size_y)
       real_image[x*size_x + y] = realOut;
       imag_image[x*size_x + y] = imagOut;
     }
+  }
     /*
     // Write the buffer back to were the original values were
     for(unsigned int x = 0; x < size_x; x++)
@@ -305,7 +310,6 @@ void cpu_iffty(float *real_image, float *imag_image, int size_x, int size_y)
       imag_image[x*size_x + y] = imagOutBuffer[x];
     }
     */
-  }
   }
   // Reclaim some memory
   /*
@@ -325,6 +329,9 @@ void cpu_filter(float *real_image, float *imag_image, int size_x, int size_y)
   int eight7X = size_x - eightX;
   int eightY = size_y/8;
   int eight7Y = size_y - eightY;
+#pragma omp parallel shared(real_image, imag_image, eightX, eight7X, eightY, eight7Y)
+  {
+  #pragma omp for
   for(unsigned int x = 0; x < size_x; x++)
   {
     for(unsigned int y = 0; y < size_y; y++)
@@ -340,6 +347,7 @@ void cpu_filter(float *real_image, float *imag_image, int size_x, int size_y)
       }
     }
   }
+  }
 }
 
 float imageCleaner(float *real_image, float *imag_image, int size_x, int size_y)
@@ -347,29 +355,33 @@ float imageCleaner(float *real_image, float *imag_image, int size_x, int size_y)
   // These are used for timing
   struct timeval tv1, tv2;
   struct timezone tz1, tz2;
+  int maxt = 8;
 
-  printf (" size_x %d size_y %d\n", size_x, size_y);
+  maxt = omp_get_max_threads();
+  chunks = size_x/maxt;
+
+  printf (" size_x %d size_y %d maxt=  %d chunks=%d \n", size_x, size_y, maxt, chunks);
   // Start timing
   gettimeofday(&tv1,&tz1);
 
   // Perform fft with respect to the x direction
   cpu_fftx(real_image, imag_image, size_x, size_y);
   
-  printf (" fftx done\n");
+  //  printf (" fftx done\n");
 
   // Perform fft with respect to the y direction
   cpu_ffty(real_image, imag_image, size_x, size_y);
 
-  printf (" ffty done\n");
+  //  printf (" ffty done\n");
   // Filter the transformed image
   cpu_filter(real_image, imag_image, size_x, size_y);
-  printf (" cpu_filter done\n");
+  //  printf (" cpu_filter done\n");
   // Perform an inverse fft with respect to the x direction
   cpu_ifftx(real_image, imag_image, size_x, size_y);
-  printf (" ifftx done\n");
+  //  printf (" ifftx done\n");
   // Perform an inverse fft with respect to the y direction
   cpu_iffty(real_image, imag_image, size_x, size_y);
-  printf (" iffty done\n");
+  //  printf (" iffty done\n");
   // End timing
   gettimeofday(&tv2,&tz2);
 
