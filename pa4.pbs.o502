@@ -1,0 +1,8 @@
+rm -f *.o ImageCleaner
+g++ -fopenmp -o ImageCleaner main.cc JPEGWriter.cc CpuReference.cc ImageCleaner.cc -ljpeg
+ size_x 1024 size_y 1024 maxt=  8 chunks=128 
+OPTIMIZED IMPLEMENTATION STATISTICS:
+  Optimized Kernel Execution Time: 26739.419922 ms
+
+Writing out OpenMP generated image to images/noisy_03_out.jpg
+
