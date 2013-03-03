@@ -1,9 +1,0 @@
-1;2c/var/spool/torque/mom_priv/jobs/375.ip-10-254-5-195.us-west-2.compute.internal.SC: line 1: 1: command not found
-/var/spool/torque/mom_priv/jobs/375.ip-10-254-5-195.us-west-2.compute.internal.SC: line 1: 2c#!/bin/sh: No such file or directory
-ImageCleaner.cc:1:3: error: invalid suffix "c" on integer constant
-ImageCleaner.cc:1:1: error: stray '#' in program
-ImageCleaner.cc:1:1: error: expected unqualified-id before numeric constant
-ImageCleaner.cc:1:3: error: expected unqualified-id before numeric constant
-ImageCleaner.cc:19:23: error: expected declaration before end of line
-make: *** [all] Error 1
-/var/spool/torque/mom_priv/jobs/375.ip-10-254-5-195.us-west-2.compute.internal.SC: line 11: ./ImageCleaner: No such file or directory

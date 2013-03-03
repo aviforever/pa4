@@ -1,4 +1,0 @@
-ImageCleaner.cc: In function 'void cpu_fftx(float*, float*, int, int)':
-ImageCleaner.cc:33:7: error: expected ';' before '}' token
-make: *** [all] Error 1
-/var/spool/torque/mom_priv/jobs/453.ip-10-254-5-195.us-west-2.compute.internal.SC: 13: /var/spool/torque/mom_priv/jobs/453.ip-10-254-5-195.us-west-2.compute.internal.SC: ./ImageCleaner: not found
